@@ -9,3 +9,4 @@ dist/
 build/
 .idea/
 .env.*.local
+PROJECT_EXPLANATION.md
