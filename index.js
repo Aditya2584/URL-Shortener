@@ -3,7 +3,7 @@ const { connectToMongoDB } = require("./connect");
 const URL = require("./models/url");
 const path = require("path");
 const cookieParser = require("cookie-parser")
-const { restrictToLoggedinUseronly,checkAuth } = require("./middlewares/auth")
+const { checkForAuthentication, restrictTo } = require("./middlewares/auth")
 
 // Routes
 const staticRoute = require("./routes/staticRoutes");
@@ -24,10 +24,11 @@ app.set("views", path.resolve("./views"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use(checkForAuthentication)
 
-app.use("/url",restrictToLoggedinUseronly, urlRoute);
+app.use("/url", restrictTo(["NORMAL","ADMIN"]), urlRoute);
 app.use("/user", userRoutes);
-app.use("/",checkAuth, staticRoute);
+app.use("/", staticRoute);
 
 app.get("/test", async (req, res) => {
   const allURLs = await URL.find({});
